@@ -20,20 +20,37 @@ spring:
       org:
         quartz:
           scheduler:
+            # 可以是任何字符串，并且该值对调度程序本身没有意义，而是作为客户端代码在同一程序中使用多个实例时区分调度程序的机制。
+            # 如果您正在使用群集功能，则必须对群集中“逻辑上”相同的调度程序的每个实例使用相同的名称。
             instanceName: THScheduler
+            # 可以是任何字符串，但对于所有调度程序来说，必须是唯一的，就像它们在集群中是相同的“逻辑”调度程序一样。如果希望为您生成Id，则可以使用值“AUTO”作为instanceId。
+            # 或者如果你想要这个值来自系统属性“org.quartz.scheduler.instanceId”的值“SYS_PROP”。
             instanceId: AUTO
+            # 或者如果你想要这个值来自系统属性“org.quartz.scheduler.instanceId”的值“SYS_PROP”。
             makeSchedulerThreadDaemon: true
           threadPool:
+            # 是要使用的ThreadPool实现的名称。Quartz附带的线程池是“org.quartz.simpl.SimpleThreadPool”，并且应该能够满足几乎每个用户的需求。
             class: org.quartz.simpl.SimpleThreadPool
             makeThreadsDaemons: true
+            # 这是可用于并发执行作业的线程数。
             threadCount: 5
             threadPriority: 5
           jobStore:
+            # JobStoreTX通过在每次操作（如添加jobs）后调用数据库连接上的commit（）（或rollback（））来管理所有事务。
+            # 如果在独立应用程序中使用Quartz，或者在应用程序不使用JTA事务的情况下，则在Servlet容器中使用JDBCJobStore。
             class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            # Driver代表了解不同数据库系统的特定“方言”。可能的选择包括：
+            #   org.quartz.impl.jdbcjobstore.StdJDBCDelegate（用于完全符合JDBC的驱动程序）
+            #   org.quartz.impl.jdbcjobstore.MSSQLDelegate（对于Microsoft SQL Server和Sybase）
+            #   org.quartz.impl.jdbcjobstore.WebLogicDelegate（对于WebLogic驱动程序）
+            #   org.quartz.impl.jdbcjobstore.oracle.WebLogicOracleDelegate（对于Weblogic中使用的Oracle驱动程序）
             driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
-#            driverDelegateClass: org.quartz.impl.jdbcjobstore.MSSQLDelegate
+            # JDBCJobStore的“表前缀”属性是一个等于在数据库中创建的Quartz表的前缀的字符串。如果使用不同的表前缀，则可以在同一数据库中拥有多组Quartz表。
             tablePrefix: qrtz_
+            # 设置为“true”以打开群集功能。如果您有多个Quartz实例使用同一组数据库表，则此属性必须设置为“true”，否则您将遇到破坏。
             isClustered: true
+            # 此属性的值必须是配置属性文件中定义的DataSource的名称。
             dataSource: quartz
             misfireThreshold: 2500
-    job-store-type: jdbc          #默认情况下，使用内存JobStore。但是，如果DataSource应用程序中有bean可用，并且相应地spring.quartz.job-store-type配置了属性，则可以配置基于JDBC的存储
+    # 默认情况下，使用内存JobStore。但是，如果DataSource应用程序中有bean可用，并且相应地spring.quartz.job-store-type配置了属性，则可以配置基于JDBC的存储
+    job-store-type: jdbc
