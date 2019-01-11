@@ -1,0 +1,152 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>quartz</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="layui/css/layui.css"  media="all">
+    <script src="layui/layui.js" charset="utf-8"></script>
+    <script src="/jquery-3.3.1/jquery-3.3.1.min.js" charset="utf-8"></script>
+</head>
+<script>
+    layui.use('table', function(){
+        var table = layui.table, util=layui.util, layer=layui.layer;
+        table.render({
+            elem: '#quartz',
+            url:'/job/list/',
+            cellMinWidth: 80,
+            toolbar: '#tableToolbar',
+            cols: [
+                [
+                    {field:'name', title: 'Job名称'},
+                    {field:'groupName', title: 'Group名称'},
+                    {field:'className', title: 'Class'},
+                    {field:'methodName', title: 'Method'},
+                    {field:'status', title: 'Job状态', sort: true},
+                    {field:'cron', title: 'Cron表达式'},
+                    {field:'startTime', title: '开始时间', sort: true, templet: function(d) {return util.toDateString(d.ctime*1000);}}, //调用layer内置 时间格式化方法
+                    {field:'endTime', title: '结束时间', sort: true, templet: function(d) {return util.toDateString(d.ctime*1000);}},
+                    {field:'remark', title: '备注'},
+                    {field:'right', width:300, title: '操作', toolbar: '#columnToolbar'},
+                ]
+            ]
+        });
+
+        //头工具栏事件
+        table.on('toolbar(quartz)', function(obj){
+            if(obj.event === 'addJob'){
+                window.location.href = "/job/add/-1"
+            }
+        });
+
+        //监听行工具事件
+        table.on('tool(quartz)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'del'){
+                layer.confirm('真的删除行么', {icon: 3, title:'删除确认'}, function(index){
+                    $.ajax({
+                        url:"/job/delete/" + data.id,
+                        success:function(data){
+                            if(data){
+                                layer.alert('删除成功', {icon: 1, time: 2000, title: "删除" }, function(){
+                                    window.location.href = "/"
+                                });
+                            } else {
+                                layer.alert('删除失败', {icon: 2, time: 2000, title: "删除" }, function(){
+                                    layer.close(index);
+                                });
+                            }
+                        },
+                        error:function(data){
+                            layer.alert('删除失败', {icon: 2, time: 2000, title: "删除" }, function(){
+                                layer.close(index);
+                            });
+                        }
+                    })
+                });
+            } else if(obj.event === 'edit'){
+                window.location.href = "/job/add/" + data.id;
+            } else if(obj.event === 'stop'){
+                $.ajax({
+                    url:"/job/stop/" + data.id,
+                    success:function(data){
+                        if(data){
+                            layer.alert('暂停成功', {icon: 1, time: 2000, title: "暂停" }, function(){
+                                window.location.href = "/"
+                            });
+                        } else {
+                            layer.alert('暂停失败', {icon: 2, time: 2000, title: "暂停" }, function(){
+                                layer.close(index);
+                            });
+                        }
+                    },
+                    error:function(data){
+                        layer.alert('暂停失败', {icon: 2, time: 2000, title: "暂停" }, function(){
+                            layer.close(index);
+                        });
+                    }
+                })
+            } else if(obj.event === 'restart'){
+                $.ajax({
+                    url:"/job/start/" + data.id,
+                    success:function(data){
+                        if(data){
+                            layer.alert('恢复成功', {icon: 1, time: 2000, title: "恢复" }, function(){
+                                window.location.href = "/"
+                            });
+                        } else {
+                            layer.alert('恢复失败', {icon: 2, time: 2000, title: "恢复" }, function(){
+                                layer.close(index);
+                            });
+                        }
+                    },
+                    error:function(data){
+                        layer.alert('恢复失败', {icon: 2, time: 2000, title: "恢复" }, function(){
+                            layer.close(index);
+                        });
+                    }
+                })
+            } else if(obj.event === 'start'){
+                $.ajax({
+                    url:"/job/init/" + data.id,
+                    success:function(data){
+                        if(data){
+                            layer.alert('启动成功', {icon: 1, time: 2000, title: "启动" }, function(){
+                                window.location.href = "/"
+                            });
+                        } else {
+                            layer.alert('启动失败', {icon: 2, time: 2000, title: "启动" }, function(){
+                                layer.close(index);
+                            });
+                        }
+                    },
+                    error:function(data){
+                        layer.alert('启动失败', {icon: 2, time: 2000, title: "启动" }, function(){
+                            layer.close(index);
+                        });
+                    }
+                })
+            }
+        });
+
+    });
+</script>
+<body>
+    <table class="layui-hide" id="quartz" lay-filter="quartz"></table>
+    <div style="display: none">
+        <div id="columnToolbar">
+            <a class="layui-btn layui-btn-xs" lay-event="start">开始运行</a>
+            <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="stop">暂停</a>
+            <a class="layui-btn layui-btn-xs" lay-event="restart">恢复</a>
+            <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        </div>
+        <div id="tableToolbar">
+            <button class="layui-btn layui-btn-sm" lay-event="addJob">新建Job</button>
+        </div>
+    </div>
+</body>
+</html>

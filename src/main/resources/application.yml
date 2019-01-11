@@ -1,0 +1,39 @@
+spring:
+
+  resources:
+    static-locations: classpath:/resources/, classpath:/static/
+    chain:
+      cache: false
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/quartz?characterEncoding=UTF-8
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+
+  jpa:
+    database: MYSQL
+    show-sql: true
+
+  quartz:
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: THScheduler
+            instanceId: AUTO
+            makeSchedulerThreadDaemon: true
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            makeThreadsDaemons: true
+            threadCount: 5
+            threadPriority: 5
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+#            driverDelegateClass: org.quartz.impl.jdbcjobstore.MSSQLDelegate
+            tablePrefix: qrtz_
+            isClustered: true
+            dataSource: quartz
+            misfireThreshold: 2500
+    job-store-type: jdbc          #默认情况下，使用内存JobStore。但是，如果DataSource应用程序中有bean可用，并且相应地spring.quartz.job-store-type配置了属性，则可以配置基于JDBC的存储
