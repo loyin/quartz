@@ -1,5 +1,6 @@
-package com.quartz.demo.util;
+package com.quartz.demo.Job.JobManager;
 
+import com.quartz.demo.util.Constants;
 import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,9 +9,9 @@ import org.springframework.stereotype.Component;
 
 
 @Component("QuartzUtils")
-public class QuartzUtils {
+public class QuartzManager {
 
-    private Logger log = LoggerFactory.getLogger(QuartzUtils.class);
+    private Logger log = LoggerFactory.getLogger(QuartzManager.class);
 
     @Autowired
     private Scheduler scheduler;

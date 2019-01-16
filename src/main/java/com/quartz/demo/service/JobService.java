@@ -3,7 +3,7 @@ package com.quartz.demo.service;
 import com.quartz.demo.dao.JobDao;
 import com.quartz.demo.entity.JobInfo;
 import com.quartz.demo.util.Constants;
-import com.quartz.demo.util.QuartzUtils;
+import com.quartz.demo.Job.JobManager.QuartzManager;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,10 @@ public class JobService{
     private JobDao jobDao;
 
     @Autowired
-    private QuartzUtils quartzUtils;
+    private QuartzManager quartzManager;
+
+    @Autowired
+    private JobLogsService jobLogsService;
 
     public List<JobInfo> findAll() {
         return jobDao.findAll();
@@ -32,6 +35,7 @@ public class JobService{
             throw new Exception("jobName与groupName不能与原有job相同!");
         }
         jobInfo = jobDao.save(jobInfo);
+        jobLogsService.save(jobInfo);
         return jobInfo.getId() > 0 ? "true" : "false";
     }
 
@@ -39,7 +43,7 @@ public class JobService{
         JobInfo jobInfo = findById(id);
         try {
 //            " 0/5 * * ? * *"
-            quartzUtils.addJob(jobInfo.getName(), Class.forName(jobInfo.getClassName()), jobInfo.getGroupName(), jobInfo.getCron());
+            quartzManager.addJob(jobInfo.getName(), Class.forName(jobInfo.getClassName()), jobInfo.getGroupName(), jobInfo.getCron());
             jobInfo.setStatus(Constants.NORMAL);
             jobDao.saveAndFlush(jobInfo);
             return "true";
@@ -54,7 +58,7 @@ public class JobService{
     public String edit(JobInfo jobInfo) {
         try {
 //            jobInfo.setStatus(Constants.NOSCHED);
-            quartzUtils.modifyTigger(jobInfo.getName(), jobInfo.getGroupName(), jobInfo.getCron());
+            quartzManager.modifyTigger(jobInfo.getName(), jobInfo.getGroupName(), jobInfo.getCron());
             jobDao.saveAndFlush(jobInfo);
             return "true";
         } catch (SchedulerException e) {
@@ -66,7 +70,7 @@ public class JobService{
     public String deleteJobById(Integer id) {
         JobInfo jobInfo = findById(id);
         try {
-            quartzUtils.removeJob(jobInfo.getName(), jobInfo.getGroupName());
+            quartzManager.removeJob(jobInfo.getName(), jobInfo.getGroupName());
             jobDao.delete(jobInfo);
             return "true";
         } catch (SchedulerException e) {
@@ -78,7 +82,7 @@ public class JobService{
     public String stopJob(Integer id) {
         JobInfo jobInfo = findById(id);
         try {
-            quartzUtils.pauseJob(jobInfo.getName(), jobInfo.getGroupName());
+            quartzManager.pauseJob(jobInfo.getName(), jobInfo.getGroupName());
             jobInfo.setStatus(Constants.PAUSED);
             jobDao.saveAndFlush(jobInfo);
             return "true";
@@ -91,7 +95,7 @@ public class JobService{
     public String startJob(Integer id) {
         JobInfo jobInfo = findById(id);
         try {
-            quartzUtils.resumeJob(jobInfo.getName(), jobInfo.getGroupName());
+            quartzManager.resumeJob(jobInfo.getName(), jobInfo.getGroupName());
             jobInfo.setStatus(Constants.NORMAL);
             jobDao.saveAndFlush(jobInfo);
             return "true";
