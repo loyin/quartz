@@ -8,7 +8,7 @@ public class QuartzIndex {
 
     @RequestMapping("/")
     public String index(){
-        return "quartz/index";
+        return "login";
     }
 
 
