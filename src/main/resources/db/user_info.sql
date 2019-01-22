@@ -35,3 +35,5 @@ CREATE TABLE `user_info` (
   `remark` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `user_info` (`id`, `name`, `login_name`, `password`, `sex`, `phone`, `email`, `create_date`, `create_user`, `update_date`, `update_user`, `flag`, `remark`) VALUES ('1', 'admin', 'admin', 'admin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);

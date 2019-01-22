@@ -25,7 +25,7 @@ public class UserInfo {
     private String createUser;
     private Date updateDate;
     private String updateUser;
-    private String falg;
+    private String flag;
     private String remark;
 
     public Integer getId() {
@@ -116,12 +116,12 @@ public class UserInfo {
         this.updateUser = updateUser;
     }
 
-    public String getFalg() {
-        return falg;
+    public String getFlag() {
+        return flag;
     }
 
-    public void setFalg(String falg) {
-        this.falg = falg;
+    public void setFlag(String flag) {
+        this.flag = flag;
     }
 
     public String getRemark() {

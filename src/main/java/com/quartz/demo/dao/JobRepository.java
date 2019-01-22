@@ -8,8 +8,13 @@ import org.springframework.stereotype.Repository;
 import java.io.Serializable;
 
 @Repository
-public interface JobDao extends JpaRepository<JobInfo, Integer>, JpaSpecificationExecutor<JobInfo>, Serializable {
+public interface JobRepository extends JpaRepository<JobInfo, Integer>, JpaSpecificationExecutor<JobInfo>, Serializable {
 
+    /**
+     * 用name与groupName查询Job对象
+     * @param name
+     * @param groupName
+     */
     JobInfo findByNameAndGroupName(String name, String groupName);
 
 }

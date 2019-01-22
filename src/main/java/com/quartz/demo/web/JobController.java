@@ -2,6 +2,7 @@ package com.quartz.demo.web;
 
 import com.quartz.demo.entity.JobInfo;
 import com.quartz.demo.service.JobService;
+import com.quartz.demo.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +27,7 @@ public class JobController {
         List<JobInfo> list = jobService.findAll();
         Map<String, Object> map = new HashMap<>();
         map.put("data", list);
-        map.put("code", "0");
+        map.put("code", Constants.LAYUI_TABLE_SUCCESS_CODE);
         return map;
     }
 

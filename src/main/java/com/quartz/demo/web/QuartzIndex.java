@@ -7,9 +7,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class QuartzIndex {
 
     @RequestMapping("/")
-    public String index(){
+    public String login(){
         return "login";
     }
 
-
+    @RequestMapping("/index")
+    public String index(){
+        return "quartz/index";
+    }
 }

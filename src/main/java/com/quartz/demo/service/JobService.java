@@ -1,9 +1,9 @@
 package com.quartz.demo.service;
 
-import com.quartz.demo.dao.JobDao;
+import com.quartz.demo.Job.JobManager.QuartzManager;
+import com.quartz.demo.dao.JobRepository;
 import com.quartz.demo.entity.JobInfo;
 import com.quartz.demo.util.Constants;
-import com.quartz.demo.Job.JobManager.QuartzManager;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.util.List;
 public class JobService{
 
     @Autowired
-    private JobDao jobDao;
+    private JobRepository jobRepository;
 
     @Autowired
     private QuartzManager quartzManager;
@@ -24,17 +24,17 @@ public class JobService{
     private JobLogsService jobLogsService;
 
     public List<JobInfo> findAll() {
-        return jobDao.findAll();
+        return jobRepository.findAll();
     }
 
     public String insert(JobInfo jobInfo) throws Exception {
         jobInfo.setStartTime(new Date());
         jobInfo.setStatus(Constants.NOSCHED);
-        JobInfo job = jobDao.findByNameAndGroupName(jobInfo.getName(), jobInfo.getGroupName());
+        JobInfo job = jobRepository.findByNameAndGroupName(jobInfo.getName(), jobInfo.getGroupName());
         if(job != null) {
             throw new Exception("jobName与groupName不能与原有job相同!");
         }
-        jobInfo = jobDao.save(jobInfo);
+        jobInfo = jobRepository.save(jobInfo);
         jobLogsService.save(jobInfo);
         return jobInfo.getId() > 0 ? "true" : "false";
     }
@@ -45,7 +45,7 @@ public class JobService{
 //            " 0/5 * * ? * *"
             quartzManager.addJob(jobInfo.getName(), Class.forName(jobInfo.getClassName()), jobInfo.getGroupName(), jobInfo.getCron());
             jobInfo.setStatus(Constants.NORMAL);
-            jobDao.saveAndFlush(jobInfo);
+            jobRepository.saveAndFlush(jobInfo);
             return "true";
         } catch (SchedulerException e) {
             e.printStackTrace();
@@ -59,7 +59,7 @@ public class JobService{
         try {
 //            jobInfo.setStatus(Constants.NOSCHED);
             quartzManager.modifyTigger(jobInfo.getName(), jobInfo.getGroupName(), jobInfo.getCron());
-            jobDao.saveAndFlush(jobInfo);
+            jobRepository.saveAndFlush(jobInfo);
             return "true";
         } catch (SchedulerException e) {
             e.printStackTrace();
@@ -71,7 +71,7 @@ public class JobService{
         JobInfo jobInfo = findById(id);
         try {
             quartzManager.removeJob(jobInfo.getName(), jobInfo.getGroupName());
-            jobDao.delete(jobInfo);
+            jobRepository.delete(jobInfo);
             return "true";
         } catch (SchedulerException e) {
             e.printStackTrace();
@@ -84,7 +84,7 @@ public class JobService{
         try {
             quartzManager.pauseJob(jobInfo.getName(), jobInfo.getGroupName());
             jobInfo.setStatus(Constants.PAUSED);
-            jobDao.saveAndFlush(jobInfo);
+            jobRepository.saveAndFlush(jobInfo);
             return "true";
         } catch (Exception e) {
             e.printStackTrace();
@@ -97,7 +97,7 @@ public class JobService{
         try {
             quartzManager.resumeJob(jobInfo.getName(), jobInfo.getGroupName());
             jobInfo.setStatus(Constants.NORMAL);
-            jobDao.saveAndFlush(jobInfo);
+            jobRepository.saveAndFlush(jobInfo);
             return "true";
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,6 +106,6 @@ public class JobService{
     }
 
     public JobInfo findById(Integer id){
-        return jobDao.findById(id).get();
+        return jobRepository.findById(id).get();
     }
 }
