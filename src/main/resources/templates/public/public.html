@@ -5,19 +5,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>layout 后台大布局 - Layui</title>
-    <link rel="stylesheet" href="/layui/css/layui.css"  media="all">
-    <script src="/layui/layui.js" charset="utf-8"></script>
-    <script src="/jquery-3.3.1/jquery-3.3.1.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="resource/layui/css/layui.css"  media="all">
+    <script src="resource/layui/layui.js" charset="utf-8"></script>
+    <script src="resource/jquery-3.3.1/jquery-3.3.1.min.js" charset="utf-8"></script>
 </head>
 <body>
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header" th:fragment="layui-header">
-        <div class="layui-logo">layui 后台布局</div>
-        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <div class="layui-logo">Spring Boot Demo</div>
         <ul class="layui-nav layui-layout-left">
-            <li class="layui-nav-item"><a href="">控制台</a></li>
-            <li class="layui-nav-item"><a href="">商品管理</a></li>
-            <li class="layui-nav-item"><a href="">用户</a></li>
+            <li class="layui-nav-item"><a href="">标签页1</a></li>
+            <li class="layui-nav-item"><a href="">标签页1</a></li>
+            <li class="layui-nav-item"><a href="">标签页1</a></li>
             <li class="layui-nav-item">
                 <a href="javascript:;">其它系统</a>
                 <dl class="layui-nav-child">
@@ -38,7 +37,7 @@
                     <dd><a href="">安全设置</a></dd>
                 </dl>
             </li>
-            <li class="layui-nav-item"><a href="">退了</a></li>
+            <li class="layui-nav-item"><a href="loginOut">退了</a></li>
         </ul>
     </div>
 
@@ -47,7 +46,7 @@
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree"  lay-filter="test">
                 <li class="layui-nav-item layui-nav-itemed">
-                    <a class="" href="javascript:;">所有商品</a>
+                    <a class="" href="javascript:;">菜单1</a>
                     <dl class="layui-nav-child">
                         <dd><a href="javascript:;">列表一</a></dd>
                         <dd><a href="javascript:;">列表二</a></dd>
@@ -68,20 +67,9 @@
             </ul>
         </div>
     </div>
-
-
-
     <div class="layui-footer" th:fragment="layui-footer">
-        <!-- 底部固定区域 -->
         © layui.com - 底部固定区域
     </div>
 </div>
-<script>
-    //JavaScript代码区域
-    layui.use('element', function(){
-        var element = layui.element;
-
-    });
-</script>
 </body>
 </html>

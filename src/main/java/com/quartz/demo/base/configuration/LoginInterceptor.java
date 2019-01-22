@@ -10,8 +10,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.HashSet;
-import java.util.Set;
 
 @Controller
 @Component
@@ -22,12 +20,6 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         log.info("----------------进入拦截器----------------");
-        String basePath = request.getContextPath();
-        String path = request.getRequestURI();
-        //是否进行登陆拦截
-        if (doLoginInterceptor(path, basePath)) {
-            return true;
-        }
         //如果登录了，会把用户信息存进session
         HttpSession session = request.getSession();
         UserInfo users = (UserInfo) session.getAttribute("userInfo");
@@ -38,29 +30,12 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
                 response.getWriter().print("LoginTimeout");
                 return false;
             } else {
-                log.info("尚未登录，跳转到登录界面" + request.getContextPath());
+                log.info("尚未登录，跳转到登录界面");
                 response.sendRedirect("/");
             }
             return false;
         }
         return true;
-    }
-
-    /**
-     * 是否进行登陆过滤
-     */
-    private boolean doLoginInterceptor(String path, String basePath) {
-        path = path.substring(basePath.length());
-        Set<String> notLoginPaths = new HashSet<>();
-        //设置不进行登录拦截的路径：登录注册和验证码
-        notLoginPaths.add("/");
-        notLoginPaths.add("/login");
-        notLoginPaths.add("/register");
-        notLoginPaths.add("/static/**");
-        if (notLoginPaths.contains(path)) {
-            return true;
-        }
-        return false;
     }
 
 }
