@@ -1,9 +1,9 @@
 package com.quartz.demo.service;
 
 import com.quartz.demo.Job.JobManager.QuartzManager;
+import com.quartz.demo.base.util.Constants;
 import com.quartz.demo.dao.JobRepository;
 import com.quartz.demo.entity.JobInfo;
-import com.quartz.demo.util.Constants;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,6 @@ public class JobService{
     public String initJob(Integer id){
         JobInfo jobInfo = findById(id);
         try {
-//            " 0/5 * * ? * *"
             quartzManager.addJob(jobInfo.getName(), Class.forName(jobInfo.getClassName()), jobInfo.getGroupName(), jobInfo.getCron());
             jobInfo.setStatus(Constants.NORMAL);
             jobRepository.saveAndFlush(jobInfo);
@@ -57,7 +56,6 @@ public class JobService{
 
     public String edit(JobInfo jobInfo) {
         try {
-//            jobInfo.setStatus(Constants.NOSCHED);
             quartzManager.modifyTigger(jobInfo.getName(), jobInfo.getGroupName(), jobInfo.getCron());
             jobRepository.saveAndFlush(jobInfo);
             return "true";

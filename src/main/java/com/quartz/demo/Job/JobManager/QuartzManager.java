@@ -1,6 +1,6 @@
 package com.quartz.demo.Job.JobManager;
 
-import com.quartz.demo.util.Constants;
+import com.quartz.demo.base.util.Constants;
 import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

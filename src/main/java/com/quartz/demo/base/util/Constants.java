@@ -1,4 +1,4 @@
-package com.quartz.demo.util;
+package com.quartz.demo.base.util;
 
 public class Constants {
 

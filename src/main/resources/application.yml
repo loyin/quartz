@@ -5,6 +5,13 @@ spring:
     chain:
       cache: false
 
+  servlet:
+    multipart:
+      # 上传的文件大小不受限制
+      max-file-size: -1
+      max-request-size: -1
+
+
   datasource:
     url: jdbc:mysql://localhost:3306/quartz?characterEncoding=UTF-8
     username: root
@@ -62,3 +69,6 @@ spring:
       repositories:
         # 开启本地存储
         enabled: true
+
+    mongodb:
+      uri: mongodb://127.0.0.1:27017/springboot

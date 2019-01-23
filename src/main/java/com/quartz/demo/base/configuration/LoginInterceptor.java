@@ -35,6 +35,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             }
             return false;
         }
+        log.info("已登陆，不进行拦截");
         return true;
     }
 

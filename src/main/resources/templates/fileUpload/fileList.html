@@ -1,0 +1,169 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>quartz</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/resource/layui/css/layui.css" media="all">
+    <script src="/resource/layui/layui.js" charset="utf-8"></script>
+    <script src="/resource/jquery-3.3.1/jquery-3.3.1.min.js" charset="utf-8"></script>
+</head>
+<script type="text/javascript">
+    layui.use(['table', 'element'], function () {
+        var table = layui.table, util = layui.util, layer = layui.layer, element = layui.element;
+        table.render({
+            elem: '#file',
+            url: '/file/list/data',
+            cellMinWidth: 80,
+            toolbar: '#tableToolbar',
+            cols: [
+                [
+                    {field: 'fileName', title: '文件名称'},
+                    {field: 'fileJson', title: '文件标识'},
+                    {
+                        field: 'createDate', title: '创建时间', sort: true, templet: function (d) {
+                            return util.toDateString(d.ctime * 1000);
+                        }
+                    },
+                    {field: 'remark', title: '备注'},
+                    {field: 'right', width: 300, title: '操作', toolbar: '#columnToolbar'},
+                ]
+            ]
+        });
+
+        //头工具栏事件
+        table.on('toolbar(file)', function (obj) {
+            if (obj.event === 'addFile') {
+                layer.open({
+                    type: 2,
+                    title: '附件上传',
+                    shadeClose: true,
+                    shade: false,
+                    maxmin: true,
+                    area: ['893px', '600px'],
+                    content: '/file/addFile'
+                });
+            }
+        });
+
+        //监听行工具事件
+        table.on('tool(file)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                layer.confirm('真的删除行么', {icon: 3, title: '删除确认'}, function (index) {
+                    $.ajax({
+                        url: "/job/delete/" + data.id,
+                        success: function (data) {
+                            if (data) {
+                                layer.alert('删除成功', {icon: 1, time: 2000, title: "删除"}, function () {
+                                    window.location.reload();
+                                });
+                            } else {
+                                layer.alert('删除失败', {icon: 2, time: 2000, title: "删除"}, function () {
+                                    layer.close(index);
+                                });
+                            }
+                        },
+                        error: function (data) {
+                            layer.alert('删除失败', {icon: 2, time: 2000, title: "删除"}, function () {
+                                layer.close(index);
+                            });
+                        }
+                    })
+                });
+            } else if (obj.event === 'edit') {
+                window.location.href = "/job/add/" + data.id;
+            } else if (obj.event === 'stop') {
+                $.ajax({
+                    url: "/job/stop/" + data.id,
+                    success: function (data) {
+                        if (data) {
+                            layer.alert('暂停成功', {icon: 1, time: 2000, title: "暂停"}, function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            layer.alert('暂停失败', {icon: 2, time: 2000, title: "暂停"}, function () {
+                                layer.close(index);
+                            });
+                        }
+                    },
+                    error: function (data) {
+                        layer.alert('暂停失败', {icon: 2, time: 2000, title: "暂停"}, function () {
+                            layer.close(index);
+                        });
+                    }
+                })
+            } else if (obj.event === 'restart') {
+                $.ajax({
+                    url: "/job/start/" + data.id,
+                    success: function (data) {
+                        if (data) {
+                            layer.alert('恢复成功', {icon: 1, time: 2000, title: "恢复"}, function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            layer.alert('恢复失败', {icon: 2, time: 2000, title: "恢复"}, function () {
+                                layer.close(index);
+                            });
+                        }
+                    },
+                    error: function (data) {
+                        layer.alert('恢复失败', {icon: 2, time: 2000, title: "恢复"}, function () {
+                            layer.close(index);
+                        });
+                    }
+                })
+            } else if (obj.event === 'start') {
+                $.ajax({
+                    url: "/job/init/" + data.id,
+                    success: function (data) {
+                        if (data) {
+                            layer.alert('启动成功', {icon: 1, time: 2000, title: "启动"}, function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            layer.alert('启动失败', {icon: 2, time: 2000, title: "启动"}, function () {
+                                layer.close(index);
+                            });
+                        }
+                    },
+                    error: function (data) {
+                        layer.alert('启动失败', {icon: 2, time: 2000, title: "启动"}, function () {
+                            layer.close(index);
+                        });
+                    }
+                })
+            }
+        });
+
+
+
+
+    });
+</script>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div th:replace="public/public::layui-header"></div>
+    <div th:replace="public/public::layui-menu"></div>
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <table class="layui-hide" id="file" lay-filter="file"></table>
+            <div style="display: none">
+                <div id="columnToolbar">
+                    <a class="layui-btn layui-btn-xs" lay-event="view">在线预览</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                </div>
+                <div id="tableToolbar">
+                    <button class="layui-btn layui-btn-sm" lay-event="addFile">附件上传</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="public/public::layui-footer"></div>
+</div>
+</body>
+</html>

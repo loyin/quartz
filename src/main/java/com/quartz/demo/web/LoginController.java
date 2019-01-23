@@ -17,9 +17,8 @@ public class LoginController {
     @Autowired
     private UserInfoService userInfoService;
 
-    @ResponseBody
     @RequestMapping("login")
-    public Boolean login(UserInfo userInfo, HttpServletRequest request){
+    public @ResponseBody Boolean login(UserInfo userInfo, HttpServletRequest request){
         try{
             UserInfo user = userInfoService.findByLoginNameAndPassword(userInfo);
             request.getSession().setAttribute("userInfo", user);
